@@ -19,9 +19,6 @@
 package net.modelbased.proasense.adapter;
 
 import eu.proasense.internal.SimpleEvent;
-
-import kafka.producer.ProducerConfig;
-
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.thrift.TException;
@@ -84,7 +81,7 @@ public class ProaSenseKafkaProducer {
     }
 
 
-    private Properties loadAdapterProperties() {
+     Properties loadAdapterProperties() {
         adapterProperties = new Properties();
         String propFilename = "adapter.properties";
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);

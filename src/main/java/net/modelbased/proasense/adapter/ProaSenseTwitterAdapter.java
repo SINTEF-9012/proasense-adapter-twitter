@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2014-2015 SINTEF
  *
- *     Brian Elves�ter <brian.elvesater@sintef.no>
+ *     Brian Elves�ter <brian.elvesater@sintef.no>
  *     Shahzad Karamat <shazad.karamat@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,59 +21,91 @@ package net.modelbased.proasense.adapter;
 import eu.proasense.internal.ComplexValue;
 import eu.proasense.internal.SimpleEvent;
 import eu.proasense.internal.VariableType;
-
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 // Make this a war project to be deployed in Tomcat
 public class ProaSenseTwitterAdapter extends ProaSenseKafkaProducer {
     private Twitter twitter;
     private ProaSenseKafkaProducer producer;
+    private Properties adapterProperties;
 
     public ProaSenseTwitterAdapter() {
+
+
         // Create the Kakfa producer
         producer = new ProaSenseKafkaProducer();
 
+        //tok bort private fra loadAdapterProperties i klassen ProaSenseKafkaProducer for å gjenbruke metoden her.
+        this.adapterProperties = loadAdapterProperties();
+
+        String searchItem = adapterProperties.getProperty("proasense.adapter.twitter.hashtag");
+        String timeInterval = adapterProperties.getProperty("proasense.adapter.time");
+
+        String authConsumerKey = adapterProperties.getProperty("proasense.adapter.AuthConsumerKey");
+        String consumerSecret = adapterProperties.getProperty("proasense.adapter.ConsumerSecret");
+        String accessToken = adapterProperties.getProperty("proasense.adapter.AccessToken");
+        String accessTokenSecret = adapterProperties.getProperty("proasense.adapter.AccessTokenSecret");
+
+        // tester om jeg får riktige verdier ut.
+        System.out.println(authConsumerKey);
+        System.out.println(consumerSecret);
+        System.out.println(accessToken);
+        System.out.println(accessTokenSecret);
+
         // Create Twitter connection
-        twitter = createTwitterConnection();
+        twitter = createTwitterConnection(authConsumerKey, consumerSecret, accessToken, accessTokenSecret);
 
-        // Search for #hashtag
-        // Replace this code with hashtag from adapter.properties file
-        System.out.println("Write the search-word.");
-        Scanner sc = new Scanner(System.in);
-        String search = sc.next();
 
-        Query query = new Query(search);
-
-        try {
-            QueryResult result = twitter.search(query);
-            int cnt = 0;
-
-            for (Status status : result.getTweets()) {
-                cnt++;
-
-                // Convert to simple event
-                SimpleEvent event = convertToSimpleEvent(status);
-                System.out.println("SimpleEvent(" + cnt + "): " + event.toString());
-
-                // Publish simple event
-                this.producer.publishSimpleEvent(event);
-            }
-        }
-        catch (TwitterException e) {
-            System.out.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-        finally {
-            this.producer.close();
-        }
+        senseTweets(searchItem, Integer.parseInt(timeInterval));
     }
 
 
-    private Twitter createTwitterConnection() {
+    private void senseTweets(String searchItem, int timeInterval){
+
+        while(true) {
+
+            Query query = new Query(searchItem);
+
+            try {
+                QueryResult result = twitter.search(query);
+                int cnt = 0;
+
+                for (Status status : result.getTweets()) {
+                    cnt++;
+
+                    // Convert to simple event
+                    SimpleEvent event = convertToSimpleEvent(status);
+                    System.out.println("SimpleEvent(" + cnt + "): " + event.toString());
+
+                   // System.out.println(status.getUser().getName());
+
+                    // Publish simple event
+                    this.producer.publishSimpleEvent(event);
+                }
+            } catch (TwitterException e) {
+                System.out.println(e.getClass().getName() + ": " + e.getMessage());
+            }
+
+            try {
+                TimeUnit.MINUTES.sleep(timeInterval); // setter av 2 min, nok tid til å laste ned verdier som er lagt inn fra test-klassen.
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("/////////////////////////////////////");
+        }
+
+        // no need to close because the loop never breaks, code-line below will never be reached.
+        //this.producer.close();
+
+    }
+
+    private Twitter createTwitterConnection(String authConsumerKey, String consumerSecret, String accessToken, String accessTokenSecret) {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setUseSSL(true);
         cb.setDebugEnabled(true)
@@ -81,6 +113,11 @@ public class ProaSenseTwitterAdapter extends ProaSenseKafkaProducer {
                 .setOAuthConsumerSecret("flNGrS18usTrYLKgjNCvLzFMIEeWsoBuMurGhipyqzo2tmiLPs")
                 .setOAuthAccessToken("3095414087-zibVqOi9rHpFoTqUsFryErb6JFQVxgRYv8ENvf4")
                 .setOAuthAccessTokenSecret("yXNZnOlfgVthLQ7G5UIPw7VLQvb5ogeWBB3fGYTSnQ9vZ");
+
+            /*    .setOAuthConsumerKey("authConsumerKey")
+                .setOAuthConsumerSecret("consumerSecret")
+                .setOAuthAccessToken("accessToken")
+                .setOAuthAccessTokenSecret("accessTokenSecret");*/
 
         TwitterFactory tf = new TwitterFactory(cb.build());
         Twitter twitter = tf.getInstance();
