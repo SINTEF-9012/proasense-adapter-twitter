@@ -34,6 +34,8 @@ public class ProaSenseTwitterAdapter extends ProaSenseKafkaProducer {
     private Twitter twitter;
     private ProaSenseKafkaProducer producer;
     private Properties adapterProperties;
+    private String sensorId;
+    private String testPrint;
 
     public ProaSenseTwitterAdapter() {
 
@@ -52,11 +54,16 @@ public class ProaSenseTwitterAdapter extends ProaSenseKafkaProducer {
         String accessToken = adapterProperties.getProperty("proasense.adapter.AccessToken");
         String accessTokenSecret = adapterProperties.getProperty("proasense.adapter.AccessTokenSecret");
 
-        // tester om jeg får riktige verdier ut.
-        System.out.println(authConsumerKey);
-        System.out.println(consumerSecret);
-        System.out.println(accessToken);
-        System.out.println(accessTokenSecret);
+        testPrint = adapterProperties.getProperty("proasense.adapter.testPrint");
+
+        if(testPrint.equals("1")) {
+            // tester om jeg får riktige verdier ut.
+            System.out.println(authConsumerKey);
+            System.out.println(consumerSecret);
+            System.out.println(accessToken);
+            System.out.println(accessTokenSecret);
+
+        }
 
         // Create Twitter connection
         twitter = createTwitterConnection(authConsumerKey, consumerSecret, accessToken, accessTokenSecret);
@@ -81,9 +88,8 @@ public class ProaSenseTwitterAdapter extends ProaSenseKafkaProducer {
 
                     // Convert to simple event
                     SimpleEvent event = convertToSimpleEvent(status);
-                    System.out.println("SimpleEvent(" + cnt + "): " + event.toString());
 
-                   // System.out.println(status.getUser().getName());
+                    if(testPrint.equals("1")) System.out.println("SimpleEvent(" + cnt + "): " + event.toString());
 
                     // Publish simple event
                     this.producer.publishSimpleEvent(event);
@@ -97,7 +103,7 @@ public class ProaSenseTwitterAdapter extends ProaSenseKafkaProducer {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println("/////////////////////////////////////");
+            System.out.println("\r");
         }
 
         // no need to close because the loop never breaks, code-line below will never be reached.
@@ -143,7 +149,9 @@ public class ProaSenseTwitterAdapter extends ProaSenseKafkaProducer {
         event.setTimestamp(status.getCreatedAt().getTime());
 
         // Replace sensorid with sensorid property from adapter.properties file
-        event.setSensorId(new Long(status.getUser().getId()).toString());
+        //event.setSensorId(new Long(status.getUser().getId()).toString());
+        sensorId = adapterProperties.getProperty("proasense.adapter.SensorId");
+        event.setSensorId(sensorId);
         event.setEventProperties(properties);
 
         return event;
