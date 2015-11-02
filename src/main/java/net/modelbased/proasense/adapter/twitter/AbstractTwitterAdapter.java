@@ -1,4 +1,4 @@
-/**
+package net.modelbased.proasense.adapter.twitter; /**
  * Copyright (C) 2014-2015 SINTEF
  *
  *     Brian Elvesæter <brian.elvesater@sintef.no>
@@ -16,12 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.modelbased.proasense.adapter.twitter;
-
 import net.modelbased.proasense.adapter.base.AbstractBaseAdapter;
+import net.modelbased.proasense.adapter.twitter.TwitterConsumerInput;
 
 
-public abstract class AbstractTwitterAdapter extends AbstractBaseAdapter {
+ public abstract class AbstractTwitterAdapter extends AbstractBaseAdapter {
     protected TwitterConsumerInput inputPort;
 
     public AbstractTwitterAdapter() {

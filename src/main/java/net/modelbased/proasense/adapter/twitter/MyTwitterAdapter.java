@@ -1,4 +1,4 @@
-/**
+package net.modelbased.proasense.adapter.twitter; /**
  * Copyright (C) 2014-2015 SINTEF
  *
  *     Brian Elvesæter <brian.elvesater@sintef.no>
@@ -16,13 +16,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.modelbased.proasense.adapter.example;
 
 import eu.proasense.internal.ComplexValue;
 import eu.proasense.internal.SimpleEvent;
 import eu.proasense.internal.VariableType;
-
-import net.modelbased.proasense.adapter.twitter.AbstractTwitterAdapter;
 
 import twitter4j.*;
 
@@ -34,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 public class MyTwitterAdapter extends AbstractTwitterAdapter {
 
     public MyTwitterAdapter() {
+
         // Get specific adapter properties
         String searchItem = adapterProperties.getProperty("proasense.adapter.twitter.hashtag");
         String timeInterval = adapterProperties.getProperty("proasense.adapter.twitter.time");
@@ -54,9 +52,7 @@ public class MyTwitterAdapter extends AbstractTwitterAdapter {
                 for (Status status : result.getTweets()) {
                     cnt++;
 
-                    // Convert to simple event
                     SimpleEvent event = convertToSimpleEvent(status);
-//                    System.out.println("SimpleEvent(" + cnt + "): " + event.toString());
 
                     // Publish simple event
                     this.outputPort.publishSimpleEvent(event);
@@ -72,9 +68,6 @@ public class MyTwitterAdapter extends AbstractTwitterAdapter {
                 System.out.println(e.getClass().getName() + ": " + e.getMessage());
             }
         }
-
-        // No need to close because the loop never breaks, code-line below will never be reached.
-//        this.outputPort.close();
     }
 
 
@@ -100,12 +93,13 @@ public class MyTwitterAdapter extends AbstractTwitterAdapter {
 
         // Define simple event
         SimpleEvent event = this.outputPort.createSimpleEvent(timestamp, eventProperties);
-
+        System.out.println(event.toString());
         return event;
     }
 
 
     public static void main(String[] args) throws TwitterException {
+        System.out.println("MyTwitterAdapter");
         MyTwitterAdapter adapter = new MyTwitterAdapter();
     }
 }

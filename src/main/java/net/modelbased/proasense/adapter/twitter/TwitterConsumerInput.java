@@ -1,4 +1,4 @@
-/**
+package net.modelbased.proasense.adapter.twitter; /**
  * Copyright (C) 2014-2015 SINTEF
  *
  *     Brian Elvesæter <brian.elvesater@sintef.no>
@@ -16,7 +16,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.modelbased.proasense.adapter.twitter;
 
 import twitter4j.Query;
 import twitter4j.QueryResult;
