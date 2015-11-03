@@ -17,10 +17,9 @@ package net.modelbased.proasense.adapter.twitter; /**
  * limitations under the License.
  */
 import net.modelbased.proasense.adapter.base.AbstractBaseAdapter;
-import net.modelbased.proasense.adapter.twitter.TwitterConsumerInput;
 
 
- public abstract class AbstractTwitterAdapter extends AbstractBaseAdapter {
+public abstract class AbstractTwitterAdapter extends AbstractBaseAdapter {
     protected TwitterConsumerInput inputPort;
 
     public AbstractTwitterAdapter() {

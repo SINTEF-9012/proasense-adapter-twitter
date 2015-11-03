@@ -24,7 +24,7 @@
 
 # Folder structure
   * There is only one folder in this adapter, which is:
-    net.modelbased.proasense.adapter.twitter
+    net.modelbased.proasense.adapter.example.twitter
 
 # User guide
   * cd to folder where the pom.xml is located.

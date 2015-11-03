@@ -1,4 +1,4 @@
-package net.modelbased.proasense.adapter.twitter; /**
+/**
  * Copyright (C) 2014-2015 SINTEF
  *
  *     Brian Elvesæter <brian.elvesater@sintef.no>
@@ -16,12 +16,18 @@ package net.modelbased.proasense.adapter.twitter; /**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package net.modelbased.proasense.adapter.example;
+
+import net.modelbased.proasense.adapter.twitter.AbstractTwitterAdapter;
 
 import eu.proasense.internal.ComplexValue;
 import eu.proasense.internal.SimpleEvent;
 import eu.proasense.internal.VariableType;
 
-import twitter4j.*;
+import twitter4j.Query;
+import twitter4j.QueryResult;
+import twitter4j.Status;
+import twitter4j.TwitterException;
 
 import java.util.HashMap;
 import java.util.Map;
