@@ -23,13 +23,16 @@
   After aquiring information above, nothing more is needed for setup.
 
 # Folder structure
-  * There is only one folder in this adapter, which is:
-    net.modelbased.proasense.adapter.example.twitter
+  * There are two folder in this adapter, those are:
+    twitter-base: Abstract class to support running the program in next module.
+    twitter-example: Contains the code for the program.
 
 # User guide
-  * cd to folder where the pom.xml is located.
+  * cd to proasense-adapter-twitter
   * use command "mvn clean install"
-  * "mvn package"
+  * "mvn exec:java"
+  *The program will search for the hashtag defined in the property file and make continues poll
+   on interval defined in the property file.
 
 # Test data
   There is no test-data for this adapter.
